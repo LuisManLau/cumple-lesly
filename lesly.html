@@ -1,0 +1,574 @@
+<!--
+  Archivo: lesly.html
+  Sorpresa de cumpleaños (solo HTML + CSS + JS, sin librerías externas)
+  Para GitHub Pages
+
+  IMPORTANTE:
+  - Coloca el archivo QR-YAPE.png en la misma carpeta que lesly.html
+  - Cambia la contraseña y textos en la sección "CONFIGURACIÓN RÁPIDA"
+-->
+
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sorpresa 🎁</title>
+
+  <style>
+    /* =========================================================
+       ESTILO GENERAL (colores suaves, tarjeta, responsive)
+       ========================================================= */
+    :root{
+      --bg1:#fff1f5;
+      --bg2:#eef2ff;
+      --card:#ffffffcc;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --accent:#ec4899;
+      --accent2:#8b5cf6;
+      --danger:#ef4444;
+      --shadow: 0 18px 60px rgba(17,24,39,.18);
+      --radius: 22px;
+    }
+
+    *{ box-sizing: border-box; }
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 15% 15%, var(--bg2), transparent 55%),
+        radial-gradient(1200px 600px at 85% 20%, var(--bg1), transparent 55%),
+        linear-gradient(160deg, #ffffff, #fafafa);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 24px;
+      overflow-x:hidden;
+    }
+
+    .wrap{
+      width: min(960px, 100%);
+      display:grid;
+      gap: 18px;
+    }
+
+    .card{
+      background: var(--card);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,.7);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 22px;
+    }
+
+    .header{
+      display:flex;
+      gap: 14px;
+      align-items:center;
+      justify-content: space-between;
+      flex-wrap:wrap;
+    }
+
+    .title{
+      display:flex;
+      flex-direction:column;
+      gap: 4px;
+    }
+    h1{
+      margin:0;
+      font-size: clamp(22px, 4vw, 30px);
+      letter-spacing: -0.02em;
+    }
+    .subtitle{
+      margin:0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      background: rgba(236,72,153,.10);
+      border: 1px solid rgba(236,72,153,.22);
+      color: #9d174d;
+      font-weight: 600;
+      font-size: 13px;
+      user-select:none;
+    }
+
+    /* =========================================================
+       PANTALLA DE INICIO / CONTRASEÑA
+       ========================================================= */
+    .center{
+      display:grid;
+      gap: 12px;
+      justify-items: start;
+    }
+
+    label{
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .row{
+      display:flex;
+      gap: 10px;
+      width: 100%;
+      flex-wrap: wrap;
+      align-items:center;
+    }
+
+    input[type="password"]{
+      flex: 1 1 240px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(31,41,55,.18);
+      outline: none;
+      font-size: 15px;
+      background: rgba(255,255,255,.8);
+    }
+    input[type="password"]:focus{
+      border-color: rgba(236,72,153,.55);
+      box-shadow: 0 0 0 4px rgba(236,72,153,.12);
+    }
+
+    .btn{
+      border:0;
+      padding: 12px 16px;
+      border-radius: 14px;
+      font-weight: 800;
+      font-size: 14px;
+      cursor:pointer;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color:white;
+      box-shadow: 0 10px 22px rgba(236,72,153,.22);
+      transition: transform .08s ease, filter .2s ease;
+      user-select:none;
+    }
+    .btn:active{ transform: translateY(1px) scale(.99); }
+    .btn.secondary{
+      background: rgba(31,41,55,.06);
+      color: var(--text);
+      box-shadow:none;
+      border: 1px solid rgba(31,41,55,.12);
+      font-weight: 750;
+    }
+
+    .error{
+      display:none;
+      color: var(--danger);
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .hint{
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+      margin: 0;
+    }
+
+    /* =========================================================
+       CONTENIDO PRINCIPAL (tabs / secciones)
+       ========================================================= */
+    .hidden{ display:none !important; }
+
+    .tabs{
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .tab{
+      flex: 1 1 180px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(31,41,55,.12);
+      background: rgba(255,255,255,.55);
+      cursor:pointer;
+      font-weight: 900;
+      color: var(--text);
+      transition: transform .08s ease, background .2s ease, border-color .2s ease;
+      text-align:center;
+      user-select:none;
+    }
+    .tab:hover{ background: rgba(255,255,255,.75); }
+    .tab:active{ transform: translateY(1px); }
+    .tab.active{
+      border-color: rgba(236,72,153,.35);
+      background: rgba(236,72,153,.10);
+    }
+
+    .panel{
+      margin-top: 14px;
+      padding: 18px;
+      border-radius: 18px;
+      border: 1px dashed rgba(236,72,153,.25);
+      background: rgba(255,255,255,.55);
+    }
+
+    .message{
+      font-size: 16px;
+      line-height: 1.7;
+      margin: 0;
+      white-space: pre-wrap;
+    }
+
+    .giftBox{
+      display:grid;
+      gap: 14px;
+      align-items:center;
+    }
+    @media (min-width: 760px){
+      .giftBox{
+        grid-template-columns: 1.2fr .8fr;
+      }
+    }
+
+    .bigMoney{
+      display:inline-block;
+      font-size: 34px;
+      font-weight: 950;
+      letter-spacing: -0.02em;
+      margin: 6px 0 0 0;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .qr{
+      width: min(280px, 100%);
+      aspect-ratio: 1 / 1;
+      border-radius: 18px;
+      border: 1px solid rgba(31,41,55,.12);
+      box-shadow: 0 12px 28px rgba(17,24,39,.12);
+      background: white;
+      display:block;
+      object-fit: contain;
+    }
+
+    .note{
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+      margin: 0;
+    }
+
+    /* =========================================================
+       CONFETI (sin librerías)
+       ========================================================= */
+    .confetti{
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 9999;
+    }
+    .confetti span{
+      position:absolute;
+      top:-10px;
+      width: 10px;
+      height: 16px;
+      border-radius: 4px;
+      opacity: .9;
+      transform: translateY(-20px) rotate(0deg);
+      animation: fall linear forwards;
+      filter: drop-shadow(0 6px 8px rgba(17,24,39,.15));
+    }
+
+    @keyframes fall{
+      to{
+        transform: translateY(calc(100vh + 60px)) rotate(720deg);
+        opacity: 1;
+      }
+    }
+
+    /* mini brillo */
+    .sparkle{
+      position:absolute;
+      inset: -2px;
+      border-radius: var(--radius);
+      pointer-events:none;
+      background:
+        radial-gradient(240px 160px at 20% 0%, rgba(236,72,153,.22), transparent 60%),
+        radial-gradient(240px 160px at 80% 20%, rgba(139,92,246,.22), transparent 60%);
+      opacity: .8;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- capa de confeti -->
+  <div class="confetti" id="confetti"></div>
+
+  <div class="wrap">
+    <!-- TARJETA: TÍTULO -->
+    <section class="card">
+      <div class="sparkle" aria-hidden="true"></div>
+      <div class="header">
+        <div class="title">
+          <h1 id="pageTitle">🎂 Sorpresa de cumpleaños</h1>
+          <p class="subtitle" id="pageSubtitle">Una pequeña página con un gran “awww”.</p>
+        </div>
+        <div class="pill" id="statusPill">🔒 Bloqueado</div>
+      </div>
+    </section>
+
+    <!-- TARJETA: INICIO (contraseña) -->
+    <section class="card" id="lockScreen">
+      <div class="center">
+        <label for="passwordInput">Ingresa la contraseña para abrir tu sorpresa ✨</label>
+        <div class="row">
+          <input id="passwordInput" type="password" placeholder="Contraseña" autocomplete="off" />
+          <button class="btn" id="unlockBtn">Desbloquear</button>
+          <button class="btn secondary" id="clearBtn" type="button">Limpiar</button>
+        </div>
+
+        <div class="error" id="errorMsg">❌ Contraseña incorrecta. Intenta otra vez.</div>
+        <p class="hint" id="hintText">
+          Tip: recuerda el dia más importante de tu vida, fuiste el regalo más hermoso de todo el mundo!!! 😄
+        </p>
+      </div>
+    </section>
+
+    <!-- TARJETA: CONTENIDO PRINCIPAL -->
+    <section class="card hidden" id="mainContent">
+      <div class="tabs" role="tablist" aria-label="Secciones">
+        <button class="tab active" id="tabMessage" role="tab" aria-selected="true">💌 Mensaje</button>
+        <button class="tab" id="tabSurprise" role="tab" aria-selected="false">🎁 Sorpresa</button>
+      </div>
+
+      <!-- Panel Mensaje -->
+      <div class="panel" id="panelMessage" role="tabpanel">
+        <p class="message" id="birthdayMessage"></p>
+      </div>
+
+      <!-- Panel Sorpresa -->
+      <div class="panel hidden" id="panelSurprise" role="tabpanel">
+        <div class="giftBox">
+          <div>
+            <p style="margin:0;font-weight:900;font-size:16px;">Regalito de cumpleaños:</p>
+            <div class="bigMoney" id="giftAmount">S/ 40</div>
+            <p class="note" id="giftNote" style="margin-top:10px;">
+            
+            </p>
+            <p class="note" style="margin-top:10px;">
+            </p>
+          </div>
+
+          <div style="display:grid; gap:10px; justify-items:center;">
+            <img class="qr" id="qrImg" src="QR-YAPE.jpeg" alt="QR de Yape" />
+            <p class="note" style="text-align:center;margin:0;">📱 Por tu cumpleaños</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top: 16px;">
+        <button class="btn secondary" id="lockAgainBtn" type="button">🔒 Volver a bloquear</button>
+        <button class="btn" id="confettiBtn" type="button">🎉 Confeti</button>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    /* =========================================================
+       CONFIGURACIÓN RÁPIDA (EDITA AQUÍ)
+       ========================================================= */
+    const CONFIG = {
+      // 1) Cambia esta contraseña:
+      PASSWORD: "24122001",
+
+      // 2) Personaliza textos:
+      celebrantName: "Lesly",
+      title: "🎂 Feliz cumpleaños",
+      subtitle: "Hecho con mucho cariño para tí.",
+
+      // 3) Mensaje principal (puedes escribirlo con saltos de línea)
+      message: `Hoy no es un día cualquiera, y tú tampoco lo eres.
+
+Lesly, hay algo que admiro mucho de ti y que a veces tú no ves: eres valiente.
+Cuando te propones algo, no hay miedo ni dificultad que te derribe.
+Y aunque digas que no, eres inteligente — de una forma muy sincera te digo que sí lo eres.
+
+Quiero que recuerdes algo importante, incluso en los días en que todo va mal, aunque todo se derrumbre por dentro:
+no estás sola ni nunca estarás sola.
+Hay alguien que cree en ti, que te apoya, y que va a estar ahí, sin condiciones,
+en cada paso que decidas dar.
+
+Que este nuevo año te trate con la misma fuerza y luz que tú le das al mundo.
+Y que nunca dudes de lo valiosa que eres, simplemente por ser tú tan especial.
+
+Feliz cumpleaños 🎉💖`,
+
+      // 4) Regalo / Yape
+      giftAmountText: "S/ 10",
+      giftNote: "Me hubiera gustado invitarte a salir, pero las circunstancias no se dieron. Aunque no pudimos vernos, quería tener un detalle contigo. 💖"
+    };
+
+    /* =========================================================
+       ELEMENTOS DEL DOM
+       ========================================================= */
+    const lockScreen = document.getElementById("lockScreen");
+    const mainContent = document.getElementById("mainContent");
+    const passwordInput = document.getElementById("passwordInput");
+    const unlockBtn = document.getElementById("unlockBtn");
+    const clearBtn = document.getElementById("clearBtn");
+    const errorMsg = document.getElementById("errorMsg");
+    const statusPill = document.getElementById("statusPill");
+
+    const pageTitle = document.getElementById("pageTitle");
+    const pageSubtitle = document.getElementById("pageSubtitle");
+    const birthdayMessage = document.getElementById("birthdayMessage");
+    const giftAmount = document.getElementById("giftAmount");
+    const giftNote = document.getElementById("giftNote");
+
+    const tabMessage = document.getElementById("tabMessage");
+    const tabSurprise = document.getElementById("tabSurprise");
+    const panelMessage = document.getElementById("panelMessage");
+    const panelSurprise = document.getElementById("panelSurprise");
+
+    const lockAgainBtn = document.getElementById("lockAgainBtn");
+    const confettiBtn = document.getElementById("confettiBtn");
+    const confettiLayer = document.getElementById("confetti");
+
+    /* =========================================================
+       INICIALIZACIÓN DE CONTENIDO (según CONFIG)
+       ========================================================= */
+    pageTitle.textContent = `${CONFIG.title} ${CONFIG.celebrantName} 🎉`;
+    pageSubtitle.textContent = CONFIG.subtitle;
+    birthdayMessage.textContent = CONFIG.message;
+    giftAmount.textContent = CONFIG.giftAmountText;
+    giftNote.textContent = CONFIG.giftNote;
+
+    /* =========================================================
+       FUNCIONES: BLOQUEO / DESBLOQUEO
+       ========================================================= */
+    function showError(show){
+      errorMsg.style.display = show ? "block" : "none";
+    }
+
+    function setLocked(locked){
+      if(locked){
+        lockScreen.classList.remove("hidden");
+        mainContent.classList.add("hidden");
+        statusPill.textContent = "🔒 Bloqueado";
+        showError(false);
+        passwordInput.value = "";
+        passwordInput.focus();
+      } else {
+        lockScreen.classList.add("hidden");
+        mainContent.classList.remove("hidden");
+        statusPill.textContent = "🔓 Desbloqueado";
+        popConfetti(80);
+      }
+    }
+
+    function tryUnlock(){
+      const entered = (passwordInput.value || "").trim();
+      if(entered === CONFIG.PASSWORD){
+        showError(false);
+        setLocked(false);
+      } else {
+        showError(true);
+        passwordInput.select();
+      }
+    }
+
+    /* =========================================================
+       FUNCIONES: TABS
+       ========================================================= */
+    function activateTab(which){
+      const isMessage = which === "message";
+
+      tabMessage.classList.toggle("active", isMessage);
+      tabSurprise.classList.toggle("active", !isMessage);
+
+      tabMessage.setAttribute("aria-selected", String(isMessage));
+      tabSurprise.setAttribute("aria-selected", String(!isMessage));
+
+      panelMessage.classList.toggle("hidden", !isMessage);
+      panelSurprise.classList.toggle("hidden", isMessage);
+
+      // Un poquito de fiesta cuando abre la sorpresa
+      if(!isMessage) popConfetti(40);
+    }
+
+    /* =========================================================
+       CONFETI (simple, sin librerías)
+       ========================================================= */
+    function rand(min, max){ return Math.random() * (max - min) + min; }
+
+    function popConfetti(count = 60){
+      // Limpieza suave para no acumular nodos
+      const existing = confettiLayer.querySelectorAll("span");
+      if(existing.length > 220){
+        existing.forEach((n, i) => { if(i < 120) n.remove(); });
+      }
+
+      for(let i=0;i<count;i++){
+        const piece = document.createElement("span");
+
+        // colores pastel/bonitos
+        const hue = rand(0, 360);
+        piece.style.background = `hsl(${hue} 90% 70%)`;
+
+        // posición inicial
+        piece.style.left = rand(0, 100) + "vw";
+
+        // tamaño variado
+        const w = rand(8, 12);
+        const h = rand(10, 18);
+        piece.style.width = w + "px";
+        piece.style.height = h + "px";
+
+        // duración y delay
+        const dur = rand(1.8, 3.6);
+        const delay = rand(0, 0.35);
+        piece.style.animationDuration = dur + "s";
+        piece.style.animationDelay = delay + "s";
+
+        // rotación inicial
+        piece.style.transform = `translateY(-20px) rotate(${rand(0,360)}deg)`;
+
+        confettiLayer.appendChild(piece);
+
+        // eliminar al finalizar (duración + delay + margen)
+        setTimeout(() => piece.remove(), (dur + delay + 0.2) * 1000);
+      }
+    }
+
+    /* =========================================================
+       EVENTOS
+       ========================================================= */
+    unlockBtn.addEventListener("click", tryUnlock);
+    clearBtn.addEventListener("click", () => {
+      passwordInput.value = "";
+      showError(false);
+      passwordInput.focus();
+    });
+
+    passwordInput.addEventListener("keydown", (e) => {
+      if(e.key === "Enter") tryUnlock();
+    });
+
+    tabMessage.addEventListener("click", () => activateTab("message"));
+    tabSurprise.addEventListener("click", () => activateTab("surprise"));
+
+    lockAgainBtn.addEventListener("click", () => setLocked(true));
+    confettiBtn.addEventListener("click", () => popConfetti(120));
+
+    // Arranca bloqueado
+    setLocked(true);
+  </script>
+</body>
+</html>
+
+
+
+
